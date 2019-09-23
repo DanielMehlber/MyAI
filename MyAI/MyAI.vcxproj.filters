@@ -21,7 +21,7 @@
     <ClCompile Include="CNN.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="Split.cpp">
+    <ClCompile Include="Utils.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClInclude Include="Network.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Split.h">
+    <ClInclude Include="Utils.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,40 +9,45 @@
 namespace myai {
 
 	namespace types {
-
-		class processmgr;
+		
 		class processmgr {
 		public:
-			class process_slot {
-			public:
-				processmgr* manager;
-				process_slot(processmgr* mgr);
-				inline void start() {
-					while (!manager->stop_when_finished) {
-						if (manager->slots_finished > 0)
-							manager->slots_finished--;
-						while (manager->functions.size() > 0) {
-							std::function<void(void)> func = manager->functions.back(); manager->functions.pop_back();
-							func();
-						}
-						manager->slots_finished++;
-					}
-				}
-			};
+
 			processmgr() = delete;
 			processmgr(unsigned int thread_count);
+
 			unsigned int thread_count;
-			unsigned int slots_finished;
+			volatile unsigned int slots_finished;
 			bool stop_when_finished;
 			std::vector<std::function<void()>> functions;
 
 			void finish();
+			void process();
+
 			inline void add(std::function<void(void)> func) {
 				functions.push_back(func);
 			}
-			void process();
+
 			inline void operator+=(std::function<void()> func) {
 				add(func);
+			}
+
+		};
+
+		class _process_slot {
+		public:
+			processmgr* manager;
+			_process_slot(processmgr* mgr);
+			inline void start() {
+				while (!manager->stop_when_finished) {
+					if (manager->slots_finished > 0)
+						manager->slots_finished--;
+					while (manager->functions.size() > 0) {
+						std::function<void(void)> func = manager->functions.back(); manager->functions.pop_back();
+						func();
+					}
+					manager->slots_finished++;
+				}
 			}
 		};
 

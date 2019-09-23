@@ -1,4 +1,4 @@
-#include "Split.h"
+#include "Utils.h"
 
 void myai::types::processmgr::finish()
 {
@@ -20,3 +20,7 @@ void myai::types::processmgr::process()
 myai::types::processmgr::process_slot::process_slot(processmgr* mgr) : manager{mgr}
 {
 }
+
+myai::types::processmgr::processmgr(unsigned int thread_count) : thread_count{thread_count} {
+
+};

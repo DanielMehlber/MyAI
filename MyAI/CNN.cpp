@@ -46,7 +46,7 @@ myai::cnn::Layer::~Layer()
 void myai::cnn::Layer::compute()
 {
 	unsigned int ncount = count();
-	processmgr mgr = processmgr();
+	processmgr mgr = processmgr(500);
 	mgr.process();
 	for (unsigned int i = 0; i < ncount; i++) {
 		mgr += [=]() {this->operator[](i).compute(); };

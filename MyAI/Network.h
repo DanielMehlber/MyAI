@@ -7,7 +7,6 @@
 namespace myai {
 
 	class Network {
-
 	};
 
 	namespace utils {
