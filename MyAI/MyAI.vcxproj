@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="CNN.cpp" />
     <ClCompile Include="MyAI.cpp" />
+    <ClCompile Include="Split.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CNN.h" />
