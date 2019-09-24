@@ -10,22 +10,44 @@ namespace myai {
 
 	namespace types {
 		
+		class _process_slot;
+
 		class processmgr {
 		public:
 
 			processmgr() = delete;
 			processmgr(unsigned int thread_count);
 
-			unsigned int thread_count;
-			volatile unsigned int slots_finished;
-			bool stop_when_finished;
-			std::vector<std::function<void()>> functions;
+			struct _mgr_settings {
+				unsigned int process_count;
+				unsigned int process_slots_finished;
+				bool stop_when_finished;
+				std::vector<std::function<void()>> functions;
+			} settings;
+
+			class _process_slot {
+			public:
+				_mgr_settings* settings;
+				_process_slot(_mgr_settings* mgr);
+				inline void start() {
+					while (!settings->stop_when_finished) {
+						if (settings->process_slots_finished > 0)
+							settings->process_slots_finished--;
+						while (settings->functions.size() > 0) {
+							std::function<void(void)> func = settings->functions.back(); settings->functions.pop_back();
+							func();
+						}
+						settings->process_slots_finished++;
+					}
+				}
+			};
+			
 
 			void finish();
 			void process();
 
 			inline void add(std::function<void(void)> func) {
-				functions.push_back(func);
+				settings.functions.push_back(func);
 			}
 
 			inline void operator+=(std::function<void()> func) {
@@ -34,22 +56,7 @@ namespace myai {
 
 		};
 
-		class _process_slot {
-		public:
-			processmgr* manager;
-			_process_slot(processmgr* mgr);
-			inline void start() {
-				while (!manager->stop_when_finished) {
-					if (manager->slots_finished > 0)
-						manager->slots_finished--;
-					while (manager->functions.size() > 0) {
-						std::function<void(void)> func = manager->functions.back(); manager->functions.pop_back();
-						func();
-					}
-					manager->slots_finished++;
-				}
-			}
-		};
+		
 
 		template <typename Type>
 		class big_array {

@@ -1,27 +1,28 @@
-#include "Split.h"
 #include "Utils.h"
 
-myai::types::processmgr::processmgr(unsigned int thread_count) : thread_count{thread_count}
+myai::types::processmgr::processmgr(unsigned int max_process_count)
 {
+	settings.process_count = max_process_count;
 }
+
 
 void myai::types::processmgr::finish()
 {
-	stop_when_finished = true;
-	while (slots_finished != thread_count);
+	settings.stop_when_finished = true;
+	while (settings.process_slots_finished != settings.process_count);
 }
 
 void myai::types::processmgr::process()
 {
-	stop_when_finished = false;
+	settings.stop_when_finished = false;
 	std::vector<_process_slot> slots;
-	for (unsigned int i = 0; i < thread_count; i++) {
-		_process_slot slot(this);
+	for (unsigned int i = 0; i < settings.process_count; i++) {
+		_process_slot slot = _process_slot(&settings);
 		slots.push_back(slot);
 		std::thread t(&_process_slot::start, slot);
 	}
 }
 
-myai::types::_process_slot::_process_slot(processmgr* mgr) : manager{mgr}
+myai::types::processmgr::_process_slot::_process_slot(_mgr_settings* mgr) : settings{mgr}
 {
 }
