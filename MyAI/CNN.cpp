@@ -46,12 +46,15 @@ myai::cnn::Layer::~Layer()
 void myai::cnn::Layer::compute()
 {
 	unsigned int ncount = count();
-	processmgr mgr = processmgr(500);
-	mgr.process();
+	process::threadmgr mgr(2);
+	time::clock<std::chrono::microseconds> c;
+	mgr.start();
 	for (unsigned int i = 0; i < ncount; i++) {
 		mgr += [=]() {this->operator[](i).compute(); };
 	}
 	mgr.finish();
+	double d = c.stop();
+	println(d);
 }
 
 myai::cnn::CNN::CNN(std::initializer_list<Layer*> t)

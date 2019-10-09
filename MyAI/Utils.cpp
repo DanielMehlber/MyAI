@@ -1,28 +1,56 @@
 #include "Utils.h"
 
-myai::types::processmgr::processmgr(unsigned int max_process_count)
+
+myai::process::threadmgr::threadmgr(unsigned int process_count) : process_count{process_count}
 {
-	settings.process_count = max_process_count;
+}
+
+myai::process::threadmgr::~threadmgr()
+{
+	if (head && head->joinable())
+		head->join();
+}
+
+void myai::process::threadmgr::start()
+{
+	head = this->start(process_count);
+}
+
+std::thread* myai::process::threadmgr::start(unsigned int left)
+{
+	if (left == 0)
+		return nullptr;
+	std::thread* next = start(left - 1);
+	std::thread* th = new std::thread([=]() {
+		while (wait_for_tasks) {
+			std::function<void()> fn = NULL;
+			locker.lock();
+			if (tasks.size() > 0) {
+				fn = tasks.back();
+				tasks.pop_back();
+			}
+			locker.unlock();
+			if (fn != NULL)
+				fn();
+		}
+		if (next) {
+			next->join();
+			next->~thread();
+		}
+	});
+	return th;
+}
+
+void myai::process::threadmgr::finish()
+{
+	if (!head)
+		return;
+	wait_for_tasks = false;
+	head->join();
+}
+
+myai::process::smart_threadmgr::smart_threadmgr() : threadmgr(std::thread::hardware_concurrency())
+{
 }
 
 
-void myai::types::processmgr::finish()
-{
-	settings.stop_when_finished = true;
-	while (settings.process_slots_finished != settings.process_count);
-}
-
-void myai::types::processmgr::process()
-{
-	settings.stop_when_finished = false;
-	std::vector<_process_slot> slots;
-	for (unsigned int i = 0; i < settings.process_count; i++) {
-		_process_slot slot = _process_slot(&settings);
-		slots.push_back(slot);
-		std::thread t(&_process_slot::start, slot);
-	}
-}
-
-myai::types::processmgr::_process_slot::_process_slot(_mgr_settings* mgr) : settings{mgr}
-{
-}

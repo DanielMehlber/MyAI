@@ -3,69 +3,60 @@
 #include <thread>
 #include <vector>
 #include <functional>
-
+#include <mutex>
+#include <iostream>
 #define BIG_ARRAY_SPLIT_SIZE 500
+#define print(x) std::cout << x;
+#define println(x) std::cout << x << std::endl;
 
 namespace myai {
 
-	namespace types {
+	namespace process {
 		
-		class _process_slot;
-
-		class processmgr {
+		class threadmgr {
+		private:
+			unsigned int processes_finshed;
 		public:
-
-			processmgr() = delete;
-			processmgr(unsigned int thread_count);
-
-			struct _mgr_settings {
-				unsigned int process_count;
-				unsigned int process_slots_finished;
-				bool stop_when_finished;
-				std::vector<std::function<void()>> functions;
-			} settings;
-
-			class _process_slot {
-			public:
-				_mgr_settings* settings;
-				_process_slot(_mgr_settings* mgr);
-				inline void start() {
-					while (!settings->stop_when_finished) {
-						if (settings->process_slots_finished > 0)
-							settings->process_slots_finished--;
-						while (settings->functions.size() > 0) {
-							std::function<void(void)> func = settings->functions.back(); settings->functions.pop_back();
-							func();
-						}
-						settings->process_slots_finished++;
-					}
-				}
-			};
-			
-
+			const unsigned int process_count;
+			std::mutex locker;
+			std::vector<std::function<void()>> tasks;
+			std::thread* head;
+			bool wait_for_tasks = true;
+			threadmgr() = delete;
+			threadmgr(unsigned int process_count);
+			~threadmgr();
+			void start();
+			std::thread* start(unsigned int left);
 			void finish();
-			void process();
 
-			inline void add(std::function<void(void)> func) {
-				settings.functions.push_back(func);
+			inline void add(std::function<void()> func) {
+				locker.lock();
+				tasks.push_back(func);
+				locker.unlock();
 			}
 
 			inline void operator+=(std::function<void()> func) {
 				add(func);
 			}
-
 		};
 
+		class smart_threadmgr : public process::threadmgr{
+		public:
+			smart_threadmgr();
+		};
+
+	}
+
+	namespace types {
 		
 
 		template <typename Type>
 		class big_array {
 		private:
-
-			class Splits {
+			class Splits { // So it can be copied
 			public:
 				Type** splits;
-				unsigned int split_count;
+				unsigned int split_count, split_size;
 				~Splits() {
 					for (unsigned int i = 0; i < split_count; i++)
 						delete[] splits[i];
@@ -81,6 +72,7 @@ namespace myai {
 				unsigned int leftovers = size % split_size;
 				bool just_full_splits = leftovers == 0;
 				splits_ptr->split_count = just_full_splits ? full_split_count : full_split_count + 1;
+				splits_ptr->split_size = split_size;
 				splits_ptr->splits = new Type * [splits_ptr->split_count];
 				for (unsigned int i = 0; i < full_split_count; i++) {
 					splits_ptr->splits[i] = new Type[split_size];
@@ -103,7 +95,7 @@ namespace myai {
 
 
 			inline Type& operator[] (int i) {
-				return splits_ptr->splits[i / BIG_ARRAY_SPLIT_SIZE][i % BIG_ARRAY_SPLIT_SIZE];
+				return splits_ptr->splits[i / splits_ptr->split_size][i % splits_ptr->split_size];
 			}
 
 			inline void operator=(big_array<Type> another) {
@@ -113,6 +105,24 @@ namespace myai {
 
 		};
 
+	}
+
+	namespace time {
+		template <typename unit = std::chrono::milliseconds> class clock {
+		private:
+			std::chrono::steady_clock::time_point last;
+		public:
+			clock() {
+				last = std::chrono::steady_clock::now();
+			};
+
+			inline double stop() {
+				auto now = std::chrono::steady_clock::now();
+				auto duration = std::chrono::duration_cast<unit>(now - last);
+				last = now;
+				return duration.count();
+			};
+		};
 	}
 
 }
