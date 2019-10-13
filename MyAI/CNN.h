@@ -3,6 +3,7 @@
 #include <vector>
 #include "Utils.h"
 #include <thread>
+#include <atomic>
 
 
 using namespace myai::types;
@@ -12,15 +13,14 @@ namespace myai {
 	namespace cnn {
 
 		class Layer;
-		
 
 		class Neuron {
 		public:
 			float activation, bias;
-			Layer* prev;
-			big_array<float> weights;
-			Neuron();
-			Neuron(Layer* prev);
+			Layer* prev; //Is null, if there's no previous layer
+			std::vector<float> weights;
+			Neuron() = delete;
+			Neuron(Layer* owner);
 			~Neuron();
 
 			void compute();
@@ -28,40 +28,36 @@ namespace myai {
 
 		class Layer {
 		public:
-			big_array<Neuron> neurons;
+			std::vector<Neuron> neurons;
+			const unsigned int count;
 
-			Layer();
-			Layer(unsigned int size);
+			Layer() = delete;
+			Layer(unsigned int size, Layer* prev);
 			~Layer();
 
 			inline Neuron& operator[](unsigned int i) {
 				return neurons[i];
 			};
 
-			inline unsigned int count() {
-				return neurons.size;
-			};
 
 			void compute();
+			void compute(unsigned int thread_count);
 
 		};
 
 		class CNN : myai::Network {
 		public:
-			std::vector<Layer*> layers;
+			std::vector<Layer> layers;
 
-			CNN(std::initializer_list<Layer*> t);
+			CNN(std::initializer_list<int> t);
 
-			inline Layer* operator[](unsigned int i) {
+			inline Layer& operator[](unsigned int i) {
 				return layers[i];
 			};
 
-			inline void compute() {
-				unsigned int layer_count = layers.size();
-				for (unsigned int i = 0; i < layer_count; i++) {
-					layers[i]->compute();
-				}
-			}
+			void compute();
+			void compute(unsigned int thread_count);
+			
 
 		};
 
