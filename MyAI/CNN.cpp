@@ -15,20 +15,18 @@ myai::cnn::Neuron::~Neuron()
 
 void myai::cnn::Neuron::compute()
 {
-	if (!prev) //No previos layer to compute
-		return;
-
 	unsigned int size = prev->count;
 	activation = 0;
 	for (unsigned int i = 0; i < size; i++) {
-		activation += prev->operator[](i).activation * weights[i];
+		float weight = weights[i];
+		activation += prev->operator[](i).activation * weight;
 	}
 	activation += bias;
 	activation = utils::clamp(activation);
 }
 
 
-myai::cnn::Layer::Layer(unsigned int size, Layer* prev) : count{size}
+myai::cnn::Layer::Layer(unsigned int size, Layer* prev) : count{ size }, previous{prev}
 {
 	neurons.reserve(size);
 	for (unsigned int i = 0; i < size; i++)
@@ -42,6 +40,8 @@ myai::cnn::Layer::~Layer()
 
 void myai::cnn::Layer::compute()
 {
+	if (previous == nullptr)
+		return;
 	for (Neuron& n : neurons)
 		n.compute();
 }
@@ -50,17 +50,23 @@ myai::cnn::CNN::CNN(std::initializer_list<int> t)
 {
 	Layer* prev = nullptr;
 	for (int i : t) {
-		Layer l(i, prev);
+		Layer* l = new Layer(i, prev);
 		layers.push_back(l);
-		prev = &l;
+		prev = l;
 	}
+}
+
+myai::cnn::CNN::~CNN()
+{
+	for (Layer* l : layers)
+		l->~Layer();
 }
 
 void myai::cnn::CNN::compute()
 {
 	unsigned int layer_count = layers.size();
 	for (unsigned int i = 0; i < layer_count; i++) {
-		layers[i].compute();
+		layers[i]->compute();
 	}
 }
 
@@ -70,13 +76,15 @@ void myai::cnn::CNN::compute(unsigned int thread_count)
 		compute();
 		return;
 	}
-	for (Layer& l : layers) {
-		l.compute(thread_count);
+	for (Layer* l : layers) {
+		l->compute(thread_count);
 	}
 }
 
 void myai::cnn::Layer::compute(unsigned int threads)
 {
+	if (!previous)
+		return;
 	unsigned int neuron_count = neurons.size();
 	if (neuron_count == 0)
 		return;

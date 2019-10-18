@@ -30,6 +30,7 @@ namespace myai {
 		public:
 			std::vector<Neuron> neurons;
 			const unsigned int count;
+			const Layer* previous;
 
 			Layer() = delete;
 			Layer(unsigned int size, Layer* prev);
@@ -47,11 +48,12 @@ namespace myai {
 
 		class CNN : myai::Network {
 		public:
-			std::vector<Layer> layers;
+			std::vector<Layer*> layers;
 
 			CNN(std::initializer_list<int> t);
+			~CNN();
 
-			inline Layer& operator[](unsigned int i) {
+			inline Layer* operator[](unsigned int i) {
 				return layers[i];
 			};
 
