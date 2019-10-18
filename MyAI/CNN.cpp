@@ -81,10 +81,17 @@ void myai::cnn::CNN::compute(unsigned int thread_count)
 	}
 }
 
+void _process(std::vector<myai::cnn::Neuron>* neurons, unsigned int from, unsigned int to) {
+	for (unsigned int i = from; i < to; i++) {
+		neurons->operator[](i).compute();
+	}
+}
+
 void myai::cnn::Layer::compute(unsigned int threads)
 {
 	if (!previous)
 		return;
+	
 	unsigned int neuron_count = neurons.size();
 	if (neuron_count == 0)
 		return;
@@ -93,28 +100,18 @@ void myai::cnn::Layer::compute(unsigned int threads)
 	unsigned int _threads_count = threads <= neuron_count ? threads : neuron_count;
 	std::vector<std::thread> _threads; _threads.reserve(_threads_count);
 	
-	std::function<void(std::vector<Neuron>*)> _process = [=](std::vector<Neuron>* c) {
-		for (Neuron& n : *c)
-			n.compute();
-	};
 
-	std::vector<std::vector<Neuron>> divided; divided.reserve(_threads_count);
+	unsigned int per_thread = neuron_count / _threads_count;
 
-	{
-		unsigned int size = neuron_count / _threads_count;
-		auto last_begin = neurons.begin();
-		for (unsigned int p = 0; p < _threads_count-1; p++) {
-			std::vector<Neuron> v(last_begin, last_begin + size);
-			last_begin = last_begin + size;
-			divided.push_back(v);
-		}
-		std::vector<Neuron> v(last_begin, neurons.end());
-		divided.push_back(v);
+	unsigned int last_start_index = 0;
+	unsigned int last_end_index = per_thread;
+	for (unsigned int thread_index = 0; thread_index < _threads_count-1; thread_index++) {
+		last_end_index = (thread_index + 1) * per_thread;
+		_threads.push_back(std::thread(_process, &neurons, last_start_index, last_end_index));
+		last_start_index = last_end_index + 1;
 	}
-
-	for (unsigned int thread_index = 0; thread_index < _threads_count; thread_index++) {
-		_threads.push_back(std::thread(_process, &divided.at(thread_index)));
-	}
+	if (neuron_count > last_end_index + 1)
+		_threads.push_back(std::thread(_process, &neurons, last_start_index, neuron_count-1));
 
 	for (std::thread& t : _threads) {
 		t.join();

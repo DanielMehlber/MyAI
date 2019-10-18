@@ -6,11 +6,11 @@
 int main()
 {
 	myai::cnn::CNN cnn{
-		128 * 128,
+		256 * 256,
 		1000,
 		30,
 		1000,
-		128 * 128
+		256 * 256
 	};
 
 
@@ -31,8 +31,8 @@ int main()
 		double a = 0;
 		for (double d : v)
 			a += d;
-		average = a / v.size();
-		std::cout << "Iteration  " << i << " finished with average " << average << std::endl;
+		a = a / v.size();
+		std::cout << "Iteration  " << i << " finished in " << average<<" with average " << a << std::endl;
 	}
 	std::cout << "calculation finished, ";
 	std::cout << average;

@@ -43,7 +43,6 @@ namespace myai {
 
 			void compute();
 			void compute(unsigned int thread_count);
-
 		};
 
 		class CNN : myai::Network {
@@ -59,7 +58,6 @@ namespace myai {
 
 			void compute();
 			void compute(unsigned int thread_count);
-			
 
 		};
 
