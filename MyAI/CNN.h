@@ -36,7 +36,7 @@ namespace myai {
 			~Layer();
 
 			inline Neuron& operator[](unsigned int i) {
-				return neurons[i];
+				return neurons.at(i);
 			};
 
 

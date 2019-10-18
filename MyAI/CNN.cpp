@@ -90,10 +90,10 @@ void myai::cnn::Layer::compute(unsigned int threads)
 			n.compute();
 	};
 
-	std::vector<std::vector<Neuron>> divided; divided.reserve(threads);
+	std::vector<std::vector<Neuron>> divided; divided.reserve(_threads_count);
 
 	{
-		unsigned int size = neuron_count / threads;
+		unsigned int size = neuron_count / _threads_count;
 		auto last_begin = neurons.begin();
 		for (unsigned int p = 0; p < _threads_count-1; p++) {
 			std::vector<Neuron> v(last_begin, last_begin + size);
@@ -104,7 +104,7 @@ void myai::cnn::Layer::compute(unsigned int threads)
 		divided.push_back(v);
 	}
 
-	for (unsigned int thread_index = 0; thread_index < threads; thread_index++) {
+	for (unsigned int thread_index = 0; thread_index < _threads_count; thread_index++) {
 		_threads.push_back(std::thread(_process, &divided.at(thread_index)));
 	}
 
