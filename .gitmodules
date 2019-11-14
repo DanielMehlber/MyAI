@@ -1,0 +1,3 @@
+[submodule "BinarIO"]
+	path = BinarIO
+	url = https://github.com/DanielMehlber/BinarIO

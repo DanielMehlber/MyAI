@@ -3,52 +3,60 @@
 #include <vector>
 #include "Utils.h"
 #include <thread>
-#include <atomic>
-
+#include <string>
+#include "lwIO.h"
 
 using namespace myai::types;
 
 namespace myai {
 
-	namespace cnn {
+	namespace cnn{
 
 		class Layer;
 
-		class Neuron {
+		class Neuron{
 		public:
 			float activation, bias;
-			Layer* prev; //Is null, if there's no previous layer
+			Layer* owner; //Is null, if there's no previous layer
 			std::vector<float> weights;
-			Neuron() = delete;
+			Neuron();
 			Neuron(Layer* owner);
 			~Neuron();
 
 			void compute();
+
+			inline void operator=(float f) {
+				activation = f;
+			}
+
 		};
 
-		class Layer {
+		class Layer{
 		public:
 			std::vector<Neuron> neurons;
-			const unsigned int count;
-			const Layer* previous;
+			unsigned int count;
+			Layer* previous;
 
-			Layer() = delete;
-			Layer(unsigned int size, Layer* prev);
+			Layer();
+			Layer(unsigned int size, Layer* previous);
 			~Layer();
 
 			inline Neuron& operator[](unsigned int i) {
-				return neurons.at(i);
+				return neurons[i];
 			};
 
+			inline void operator=(float* f) {
+				for (unsigned int i = 0; i < count; i++)
+					neurons[i] = f[i];
+			}
 
 			void compute();
 			void compute(unsigned int thread_count);
 		};
 
-		class CNN : myai::Network {
+		class CNN : public myai::Network{
 		public:
 			std::vector<Layer*> layers;
-
 			CNN(std::initializer_list<int> t);
 			~CNN();
 
@@ -56,8 +64,19 @@ namespace myai {
 				return layers[i];
 			};
 
+			Layer& input() {
+				return (*layers.front());
+			}
+
+			Layer& output() {
+				return (*layers.back());
+			}
+
 			void compute();
 			void compute(unsigned int thread_count);
+			void save(const char* dest);
+			void load(const char* src);
+			void clear();
 
 		};
 
