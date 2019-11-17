@@ -8,8 +8,8 @@ myai::cnn::Neuron::Neuron()
 
 myai::cnn::Neuron::Neuron(Layer* owner) : owner{owner}
 {
-	if(owner)
-		weights.resize(owner->count);
+	if (owner->previous)
+		weights.resize(owner->previous->count);
 }
 
 myai::cnn::Neuron::~Neuron()
@@ -51,31 +51,39 @@ void myai::cnn::Layer::compute()
 		return;
 	for (Neuron& n : neurons)
 		n.compute();
+
 }
 
 myai::cnn::CNN::CNN(std::initializer_list<int> t)
 {
+	myai_dlog("Generation: CNN generation started.");
 	Layer* prev = nullptr;
 	for (int i : t) {
 		Layer* l = new Layer(i, prev);
 		layers.push_back(l);
 		prev = l;
+		myai_dlog("Generation: Layer "<<layers.size()-1<<" (neuron count: "<<i<<") generated.");
 	}
+	myai_dlog("Generation: finished.");
 
 }
 
 myai::cnn::CNN::~CNN()
 {
+	myai_dlog("Destruction: started.");
 	for (Layer* l : layers)
 		l->~Layer();
+	myai_dlog("Destruction: completed.");
 }
 
 void myai::cnn::CNN::compute()
 {
+	myai_dlog("Computation: started.");
 	unsigned int layer_count = layers.size();
 	for (unsigned int i = 0; i < layer_count; i++) {
 		layers[i]->compute();
 	}
+	myai_dlog("Destruction: completed.");
 }
 
 void myai::cnn::CNN::compute(unsigned int thread_count)
@@ -91,23 +99,26 @@ void myai::cnn::CNN::compute(unsigned int thread_count)
 
 void myai::cnn::CNN::save(const char* dest)
 {
-	//precalc size
-	unsigned int size = sizeof(unsigned int); //Layer count
-	Layer* prev = nullptr;
-	for (Layer* l : layers) {
-		size += sizeof(unsigned int); //Neuron count
-		size += l->count * (sizeof(float)); //Biases
-		if (prev) {
-			size += prev->count * sizeof(float) * l->count; //weights
-		}
-		prev = l;
-	}
-
-	bio::lw::DynamicBinaryBuffer buffer(size);
-	
+	////precalc size
+	//unsigned int size = sizeof(unsigned int); //Layer count
+	//Layer* prev = nullptr;
+	//for (Layer* l : layers) {
+	//	size += sizeof(unsigned int); //Neuron count
+	//	size += l->count * (sizeof(float)); //Biases
+	//	if (prev) {
+	//		size += prev->count * sizeof(float) * l->count; //weights
+	//	}
+	//	prev = l;
+	//}
+	myai_dlog("Saving: started.");
+	bio::lw::DynamicBinaryBuffer buffer;
+	buffer << VERSION;
+	myai_dlog("Saving: Version " << VERSION);
 	unsigned int layer_count = layers.size();
 	buffer << layer_count;
+	unsigned int _last_byte_size = buffer.buffer.size; 
 	Layer* previous = nullptr;
+	myai_dlog("Saving: "<<layer_count<<" Layers to be saved.");
 	//layer by layer
 	for (unsigned int layer_index = 0; layer_index < layer_count; layer_index++) {
 		//std::cout << "Layer " << layer_index << std::endl;
@@ -120,14 +131,15 @@ void myai::cnn::CNN::save(const char* dest)
 			Neuron& neuron = layer->neurons[neuron_index];
 			buffer << neuron.bias;
 			//weight by weight
-			unsigned int weights_count = 0;
-			if (previous)
-				weights_count = previous->count;
+			unsigned int weights_count = previous ? previous->count : 0;
 			for (unsigned int weight_index = 0; weight_index < weights_count; weight_index++) {
 				//std::cout << "Weight " << weight_index << std::endl;
 				buffer << neuron.weights[weight_index];
 			}
 		}
+		myai_dlog("Saving: Layer "<<layer_index<<" finished. "<<buffer.buffer.size - _last_byte_size << " Bytes saved.");
+		_last_byte_size = buffer.buffer.size;
+		previous = layer;
 	}
 
 	buffer.write(dest);
@@ -137,12 +149,22 @@ void myai::cnn::CNN::save(const char* dest)
 void myai::cnn::CNN::load(const char* src)
 {
 	clear();
-
+	myai_dlog("Loading: Network cleared.");
 	//Value of counts is always undefined int
 
 	bio::lw::DynamicBinaryBuffer buffer; buffer.read(src);
+	myai_dlog("Loading: Buffer loaded.");
+	float version;
+	buffer >> version;
+	if (version == VERSION) {
+		myai_dlog("Loading: Version "<<version<<" confirmed.");
+	} else {
+		myai_dlog("Loading: Version "<<version<<" not compatible to "<<VERSION);
+		throw std::exception("Version error when loading CNN: Wrong version.");
+	}
 	unsigned int layer_count = 0;
 	buffer >> layer_count;
+	myai_dlog("Loading: Serializing "<<layer_count<<" Layers...");
 	Layer* previous = nullptr;
 	//layer by layer
 	for (unsigned int layer_index = 0; layer_index < layer_count; layer_index++) {
@@ -155,11 +177,13 @@ void myai::cnn::CNN::load(const char* src)
 			unsigned int weights_count = previous ? previous->count : 0;
 			neuron.weights.resize(weights_count);
 			//weight by weight
-			for (unsigned int weight_index = 0; weight_index < weights_count; weight_index++) {
+
+			for (unsigned int weight_index = 0; weight_index < weights_count && weights_count != 0; weight_index++) {
 				buffer >> neuron.weights[weight_index];
 			}
 		}
 		previous = layer;
+		myai_dlog("Loading: Layer "<<layer_index<< " finished. "<<buffer.buffer.size<<" Bytes remaining.");
 	}
 }
 

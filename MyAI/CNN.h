@@ -5,7 +5,7 @@
 #include <thread>
 #include <string>
 #include "lwIO.h"
-
+#include <limits> //DEBUG REMOVE
 using namespace myai::types;
 
 namespace myai {
