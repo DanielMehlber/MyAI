@@ -6,8 +6,14 @@
 
 #ifdef _DEBUG
 #define myai_dlog(x) std::cout << "[MYAI-DEBUG] " << x << std::endl;
+#define myai_ldlog(x) std::cout << "[MYAI-DEBUG] " << x;
+#define dlog(x) std::cout << x << std::endl;
+#define ldlog(x) std::cout << x;
 #else
-#define myai_dlog(x) ;
+#define myai_dlog(x);
+#define myai_ldlog(x);
+#define dlog(x);
+#define ldlog(x);
 #endif
 
 #define VERSION 1.1f
