@@ -2,11 +2,11 @@
 
 
 
-myai::cnn::Neuron::Neuron()
+myai::cnn::Neuron::Neuron() : bias{ 0 }, activation{0}
 {
 }
 
-myai::cnn::Neuron::Neuron(Layer* owner) : owner{owner}
+myai::cnn::Neuron::Neuron(Layer* owner) : owner{ owner }, activation{ 0 }, bias{0}
 {
 	if (owner->previous)
 		weights.resize(owner->previous->count);
@@ -99,95 +99,73 @@ void myai::cnn::CNN::compute(unsigned int thread_count)
 
 void myai::cnn::CNN::save(const char* dest)
 {
-	myai_dlog("Saving: started.");
-	bio::lw::StaticBinaryBuffer buffer;
+	bio::lw::StaticBinaryBuffer buffer; buffer.open(dest, bio::lw::WRITE); //API update needed!
+	buffer << VERSION; myai_dlog("Saving: Version " << VERSION);
+	unsigned int layer_count = (unsigned int) layers.size();
+	buffer << layer_count; myai_dlog("Saving: " << layer_count << " layer will be saved.");
 
-	try {
-		buffer.open(dest, bio::lw::IO::WRITE);
-	}
-	catch (std::exception& e) {
-		myai_dlog("Error while opening file: " << e.what());
-		throw;
-	}
-
-	/*Network Information Segment*/
-	buffer << VERSION; //SERIALIZE: Version
-	myai_dlog("Saving: Version " << VERSION);
-	unsigned int layer_count = layers.size();
-	buffer << layer_count; //SERIALIZE: Layer count
-
-	/*Layer Structure Segment*/
 	Layer* previous = nullptr;
-	myai_dlog("Saving: "<<layer_count<<" Layers to be saved.");
-	//layer by layer
 	for (unsigned int layer_index = 0; layer_index < layer_count; layer_index++) {
-		Layer* layer = layers[layer_index];
-		unsigned int neuron_count = layer->count;
-		buffer << neuron_count; //SERIALIZE: Neuron count of layer
-		unsigned int weights_count = previous ? previous->count : 0;
-		myai_ldlog("Saving: Layer " << layer_index << ", " << neuron_count << " Neurons, ");
-		ldlog(weights_count << " weights each...");
-		//neuron by neuron
+		Layer* current_layer = layers[layer_index];
+		myai_ldlog("Saving: Layer " << layer_index << "...");
+
+		unsigned int neuron_count = (unsigned int)current_layer->count; buffer << neuron_count;
 		for (unsigned int neuron_index = 0; neuron_index < neuron_count; neuron_index++) {
-			Neuron& neuron = layer->neurons[neuron_index];
-			buffer << neuron.bias; //SERIALIZE: Neuron bias
-			//weight by weight
-			for (unsigned int weight_index = 0; weight_index < weights_count; weight_index++) {
-				buffer << neuron.weights[weight_index]; //SERIALIZE: weight
+			Neuron& current_neuron = current_layer->neurons[neuron_index];
+			buffer << current_neuron.bias;
+
+			unsigned int weight_count = previous ? previous->count : 0;
+			for (unsigned int weight_index = 0; weight_index < weight_count; weight_index++) {
+				buffer << current_layer->neurons[neuron_index].weights[weight_index];
 			}
 		}
 
-		dlog(" finished.");
-
-		previous = layer;
+		dlog(" finished. " << neuron_count << " neurons serialized.");
+		previous = current_layer;
 	}
 
 	buffer.finish();
-	
 }
 
 void myai::cnn::CNN::load(const char* src)
 {
 	clear();
-	myai_dlog("Loading: Network cleared.");
-	//Value of counts is always undefined int
-
-	bio::lw::StaticBinaryBuffer buffer; buffer.open(src, bio::lw::READ);
-	buffer.read();
-	myai_dlog("Loading: Buffer loaded.");
-	float version;
-	buffer >> version; //DESERIALIZE: Version
+	bio::lw::StaticBinaryBuffer buffer; buffer.open(src, bio::lw::READ); buffer.read();
+	float version; buffer >> version;
+	
 	if (version == VERSION) {
-		myai_dlog("Loading: Version "<<version<<" confirmed.");
-	} else {
-		myai_dlog("Loading: Version "<<version<<" not compatible with "<<VERSION);
-		throw std::exception("Version error when loading CNN: Wrong version.");
+		myai_dlog("Loading: Version " << version << " confirmed. Continue.");
 	}
-	unsigned int layer_count = 0;
-	buffer >> layer_count; //DESERIALIZE: Layer count
-	layers.resize(layer_count);
-	myai_dlog("Loading: Serializing "<<layer_count<<" Layers...");
-	Layer* previous = nullptr;
-	//layer by layer
-	for (unsigned int layer_index = 0; layer_index < layer_count; layer_index++) {
-		unsigned int neuron_count = 0;
-		buffer >> neuron_count; //DESERIALIZE: Neuron count of layer
-		Layer* layer = new Layer(neuron_count, previous);
-		for (unsigned int neuron_index = 0; neuron_index < neuron_count; neuron_index++) {
-			Neuron neuron(layer);
-			buffer >> neuron.bias; //DESERIALIZE: Neuron bias
-			unsigned int weights_count = previous ? previous->count : 0;
-			neuron.weights.resize(weights_count);
-			//weight by weight
+	else {
+		myai_dlog("Loading: Version " << version << " not matching program version " << VERSION 
+			<< ". Abort." );
+		throw std::exception("loading: versions not compatible.");
+	}
 
-			for (unsigned int weight_index = 0; weight_index < weights_count; weight_index++) {
-				buffer >> neuron.weights[weight_index]; //DESERIALIZE: Weight
+	unsigned int layer_count; buffer >> layer_count; myai_dlog("Loading: " << layer_count << " layers will be loaded.");
+
+	Layer* previous = nullptr;
+	for (unsigned int layer_index = 0; layer_index < layer_count; layer_index++) {
+		unsigned int neuron_count; buffer >> neuron_count;
+		Layer* current_layer = new Layer(neuron_count, previous);
+		myai_ldlog("Loading: Layer " << layer_index << " containing " << neuron_count << " neurons...");
+		for (unsigned int neuron_index = 0; neuron_index < neuron_count; neuron_index++) {
+			float bias; buffer >> bias;
+			current_layer->neurons[neuron_index].bias = bias;
+
+			unsigned int weight_count = previous ? previous->count : 0;
+			for (unsigned int weight_index = 0; weight_index < weight_count; weight_index++) {
+				float weight_value; buffer >> weight_value;
+				current_layer->neurons[neuron_index].weights[weight_index] = weight_value;
 			}
 		}
-		layers[layer_index] = layer;
-		previous = layer;
-		myai_dlog("Loading: Layer "<<layer_index<< " finished. ");
+
+		dlog(" finished.");
+		layers.push_back(current_layer);
+		previous = current_layer;
 	}
+
+	buffer.close();
 }
 
 void myai::cnn::CNN::clear()

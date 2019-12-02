@@ -9,11 +9,11 @@ int main()
 
 	print("Started...");
 	myai::cnn::CNN cnn{
-		10,
+		126,
 		5,
 		3,
 		5,
-		10
+		126
 	};
 
 	cnn.save("C://Users/danie/Documents/NN.cnn");
