@@ -4,7 +4,7 @@
 #include "Utils.h"
 #include <thread>
 #include <string>
-#include "lwIO.h"
+#include "BinarIO/BinarIO/lwIO.h"
 #include <limits> //DEBUG REMOVE
 using namespace myai::types;
 

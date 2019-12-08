@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyAI", "MyAI\MyAI.vcxproj", "{31CC31EB-B126-4F61-8A9E-7F2CD1265E6C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyAI-Testing", "MyAI-Testing\MyAI-Testing.vcxproj", "{9905C06A-5015-4791-B6D2-00FD541A8567}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{31CC31EB-B126-4F61-8A9E-7F2CD1265E6C}.Release|x64.Build.0 = Release|x64
 		{31CC31EB-B126-4F61-8A9E-7F2CD1265E6C}.Release|x86.ActiveCfg = Release|Win32
 		{31CC31EB-B126-4F61-8A9E-7F2CD1265E6C}.Release|x86.Build.0 = Release|Win32
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Debug|x64.ActiveCfg = Debug|x64
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Debug|x64.Build.0 = Debug|x64
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Debug|x86.ActiveCfg = Debug|Win32
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Debug|x86.Build.0 = Debug|Win32
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Release|x64.ActiveCfg = Release|x64
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Release|x64.Build.0 = Release|x64
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Release|x86.ActiveCfg = Release|Win32
+		{9905C06A-5015-4791-B6D2-00FD541A8567}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
