@@ -36,7 +36,7 @@ myai::cnn::Layer::Layer(unsigned int size, Layer* previous) : count{ size }, pre
 {
 	neurons.reserve(size);
 	for (unsigned int i = 0; i < size; i++)
-		neurons.push_back(Neuron(this));
+		neurons.emplace_back(Neuron(this));
 
 }
 
@@ -54,18 +54,35 @@ void myai::cnn::Layer::compute()
 
 }
 
+#define LOG_GEN_STARTED myai_dlog("Generation: CNN generation started.");
+#define LOG_GEN_LAYER_FINISHED_INFO myai_dlog("Generation: Layer "<<layers.size()-1<<" (neuron count: "<<i<<") generated.");
+#define LOG_GEN_FINISHED myai_dlog("Generation: finished.");
+
 myai::cnn::CNN::CNN(std::initializer_list<int> t)
 {
-	myai_dlog("Generation: CNN generation started.");
+	LOG_GEN_STARTED
 	Layer* prev = nullptr;
 	for (int i : t) {
 		Layer* l = new Layer(i, prev);
 		layers.push_back(l);
 		prev = l;
-		myai_dlog("Generation: Layer "<<layers.size()-1<<" (neuron count: "<<i<<") generated.");
+		LOG_GEN_LAYER_FINISHED_INFO
 	}
-	myai_dlog("Generation: finished.");
+	LOG_GEN_FINISHED
 
+}
+
+myai::cnn::CNN::CNN(unsigned int* layer_data, unsigned int layer_count)
+{
+	LOG_GEN_STARTED
+	layers.resize(layer_count);
+	Layer* previous = nullptr;
+	for (unsigned int i = 0; i < layer_count; i++) {
+		previous = new Layer(layer_data[i], previous);
+		layers[i] = previous;
+		LOG_GEN_LAYER_FINISHED_INFO
+	}
+	LOG_GEN_FINISHED
 }
 
 myai::cnn::CNN::~CNN()

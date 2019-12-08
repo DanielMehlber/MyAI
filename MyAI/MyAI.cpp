@@ -1,24 +1,13 @@
-#include <iostream>
 #include "CNN.h"
 
-#define EXPORT _declspec(dllexport)
-#define println(x) std::cout << x << std::endl
+#define EXPORT extern "C" _declspec(dllexport)
 
-int main()
-{
+using namespace myai::cnn;
 
-	print("Started...");
-	myai::cnn::CNN cnn{
-		126,
-		5,
-		3,
-		5,
-		126
-	};
-
-	cnn.save("C://Users/danie/Documents/NN.cnn");
-	cnn.load("C://Users/danie/Documents/NN.cnn");
-
-	return 0;
+EXPORT void* newCNN(void* layers, unsigned int layer_count) {
+	return (void*) new CNN((unsigned int*)layers, layer_count);
 }
 
+EXPORT void delCNN(void* p) {
+	((CNN*)p)->~CNN();
+}

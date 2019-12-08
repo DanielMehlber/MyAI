@@ -27,26 +27,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -109,7 +109,10 @@
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
+xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -132,7 +135,10 @@
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
+xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -159,7 +165,10 @@
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
+xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -186,7 +195,10 @@
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
+xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>

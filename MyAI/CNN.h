@@ -6,6 +6,9 @@
 #include <string>
 #include "BinarIO/BinarIO/lwIO.h"
 #include <limits> //DEBUG REMOVE
+
+#define myai_API __declspec(dllexport)
+
 using namespace myai::types;
 
 namespace myai {
@@ -19,13 +22,13 @@ namespace myai {
 			float activation, bias;
 			Layer* owner; //Is null, if there's no previous layer
 			std::vector<float> weights;
-			Neuron();
-			Neuron(Layer* owner);
-			~Neuron();
+			myai_API Neuron();
+			myai_API Neuron(Layer* owner);
+			myai_API ~Neuron();
 
-			void compute();
+			myai_API void compute();
 
-			inline void operator=(float f) {
+			myai_API inline void operator=(float f) {
 				activation = f;
 			}
 
@@ -37,46 +40,47 @@ namespace myai {
 			unsigned int count;
 			Layer* previous;
 
-			Layer();
-			Layer(unsigned int size, Layer* previous);
-			~Layer();
+			myai_API Layer();
+			myai_API Layer(unsigned int size, Layer* previous);
+			myai_API ~Layer();
 
-			inline Neuron& operator[](unsigned int i) {
+			myai_API inline Neuron& operator[](unsigned int i) {
 				return neurons[i];
 			};
 
-			inline void operator=(float* f) {
+			myai_API inline void operator=(float* f) {
 				for (unsigned int i = 0; i < count; i++)
 					neurons[i] = f[i];
 			}
 
-			void compute();
-			void compute(unsigned int thread_count);
+			myai_API void compute();
+			myai_API void compute(unsigned int thread_count);
 		};
 
 		class CNN : public myai::Network{
 		public:
 			std::vector<Layer*> layers;
-			CNN(std::initializer_list<int> t);
-			~CNN();
+			myai_API CNN(std::initializer_list<int> t);
+			myai_API CNN(unsigned int* layers, unsigned int layer_count);
+			myai_API ~CNN();
 
-			inline Layer* operator[](unsigned int i) {
+			myai_API inline Layer* operator[](unsigned int i) {
 				return layers[i];
 			};
 
-			Layer& input() {
+			myai_API Layer& input() {
 				return (*layers.front());
 			}
 
-			Layer& output() {
+			myai_API Layer& output() {
 				return (*layers.back());
 			}
 
-			void compute();
-			void compute(unsigned int thread_count);
-			void save(const char* dest);
-			void load(const char* src);
-			void clear();
+			myai_API void compute();
+			myai_API void compute(unsigned int thread_count);
+			myai_API void save(const char* dest);
+			myai_API void load(const char* src);
+			myai_API void clear();
 
 		};
 

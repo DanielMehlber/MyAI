@@ -72,23 +72,27 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)/built/$(Configuration)/$(Platform)</OutDir>
-    <IntDir>$(SolutionDir)/built/$(Configuration)/$(Platform)/temp</IntDir>
+    <OutDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)</OutDir>
+    <IntDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)/temp</IntDir>
+    <TargetName>test</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)/built/$(Configuration)/$(Platform)</OutDir>
-    <IntDir>$(SolutionDir)/built/$(Configuration)/$(Platform)/temp</IntDir>
+    <OutDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)</OutDir>
+    <IntDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)/temp</IntDir>
+    <TargetName>test</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)/built/$(Configuration)/$(Platform)</OutDir>
-    <IntDir>$(SolutionDir)/built/$(Configuration)/$(Platform)/temp</IntDir>
+    <OutDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)</OutDir>
+    <IntDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)/temp</IntDir>
+    <TargetName>test</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)/built/$(Configuration)/$(Platform)</OutDir>
-    <IntDir>$(SolutionDir)/built/$(Configuration)/$(Platform)/temp</IntDir>
+    <OutDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)</OutDir>
+    <IntDir>$(SolutionDir)/lib/$(Configuration)/$(Platform)/temp</IntDir>
+    <TargetName>test</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -107,6 +111,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MyAI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -125,6 +133,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MyAI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -147,6 +159,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MyAI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -169,6 +185,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MyAI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>del "$(OutDir)$(TargetName).exp"
+del "$(OutDir)$(TargetName).ilk"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MyAI-Testing.cpp" />
