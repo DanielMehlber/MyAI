@@ -21,6 +21,10 @@
 namespace myai {
 
 	class Network {
+	public:
+		struct SETTINGS {
+			unsigned int threaded_neuron_count = 100;
+		} settings;
 	};
 
 	namespace utils {
