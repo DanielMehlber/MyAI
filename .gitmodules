@@ -1,0 +1,6 @@
+[submodule "MyAI/deps/"]
+	path = MyAI/deps/
+	url = https://github.com/DanielMehlber/BinarIO.git
+[submodule "MyAI/BinarIO"]
+	path = MyAI/BinarIO
+	url = https://github.com/DanielMehlber/BinarIO.git
