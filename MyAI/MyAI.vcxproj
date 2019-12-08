@@ -107,6 +107,11 @@
       <AdditionalDependencies>BinarIO.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)MyAI/BinarIO/lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
     </Link>
+    <Lib />
+    <PostBuildEvent>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -125,6 +130,11 @@
       <AdditionalLibraryDirectories>$(SolutionDir)MyAI/BinarIO/lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BinarIO.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib />
+    <PostBuildEvent>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -147,6 +157,11 @@
       <AdditionalDependencies>BinarIO.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)MyAI/BinarIO/lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
     </Link>
+    <Lib />
+    <PostBuildEvent>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -169,6 +184,11 @@
       <AdditionalLibraryDirectories>$(SolutionDir)MyAI/BinarIO/lib/$(Configuration)/$(Platform)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BinarIO.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib />
+    <PostBuildEvent>
+      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib</Command>
+      <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CNN.cpp" />
