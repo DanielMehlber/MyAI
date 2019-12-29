@@ -16,6 +16,7 @@ int main()
 		126 * 126
 	};
 
+	cnn.compute(AUTO_THREAD_COUNT);
 	try {
 		cnn.save("C://Users/danie/Documents/NN.cnn");
 		cnn.load("C://Users/danie/Documents/NN.cnn");

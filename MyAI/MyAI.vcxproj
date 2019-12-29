@@ -109,8 +109,7 @@
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
-xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+      <Command>xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
 del "$(OutDir)$(TargetName).exp"
 del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
@@ -135,8 +134,7 @@ del "$(OutDir)$(TargetName).ilk"</Command>
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
-xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+      <Command>xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
 del "$(OutDir)$(TargetName).exp"
 del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
@@ -165,8 +163,7 @@ del "$(OutDir)$(TargetName).ilk"</Command>
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
-xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+      <Command>xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
 del "$(OutDir)$(TargetName).exp"
 del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>
@@ -195,8 +192,7 @@ del "$(OutDir)$(TargetName).ilk"</Command>
     </Link>
     <Lib />
     <PostBuildEvent>
-      <Command>LIB $(SolutionDir)/lib/$(Configuration)/$(Platform)/MyAI.lib $(SolutionDir)/MyAI/BinarIO/lib/$(Configuration)/$(Platform)/BinarIO.lib
-xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
+      <Command>xcopy "$(TargetPath)" "$(SolutionDir)/MyPyAI/$(TargetName)$(TargetExt)"* /Y /I
 del "$(OutDir)$(TargetName).exp"
 del "$(OutDir)$(TargetName).ilk"</Command>
       <Message>Shippes BinarIO.lib with MyAI.lib by joining them automatically</Message>

@@ -16,7 +16,7 @@
 #define ldlog(x);
 #endif
 
-#define VERSION 1.1f
+#define VERSION 1.2f
 
 namespace myai {
 
