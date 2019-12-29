@@ -164,7 +164,8 @@ void myai::cnn::CNN::load(const char* src)
 	clear();
 	bio::lw::StaticBinaryBuffer buffer; 
 	try {
-		buffer.open(src, bio::lw::READ); buffer.read();
+		buffer.open(src, bio::lw::READ); 
+		buffer.read();
 	}
 	catch (bio::types::exception & e) {
 		e.pack_info(__FUNCTION__, "Cannot open and read "+ std::string(src));

@@ -61,7 +61,7 @@ myai::types::exception::exception(const char* location, std::string message)
 
 myai::types::exception::exception(bio::types::exception& e) {
 	log = e.log;
-	log += "... Switching from bio_API to myai_API here.";
+	log += "... Switching from bio_API to myai_API here.\n";
 }
 
 myai::types::exception::~exception()
