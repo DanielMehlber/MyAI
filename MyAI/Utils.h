@@ -5,9 +5,12 @@
 #include <functional>
 #include <mutex>
 #include <iostream>
+#include "BinarIO/BinarIO/Utils.h"
 #define BIG_ARRAY_SPLIT_SIZE 500
 #define print(x) std::cout << x;
 #define println(x) std::cout << x << std::endl;
+
+#define myai_API __declspec(dllexport)
 
 namespace myai {
 
@@ -48,6 +51,18 @@ namespace myai {
 	}
 
 	namespace types {
+		
+		class exception {
+		public:
+			std::string log;
+
+			myai_API exception(const char* location, std::string message = "Exception caught.");
+			myai_API exception(bio::types::exception& e);
+			myai_API ~exception();
+			myai_API void printLog();
+			myai_API void pack_info(const char* location, std::string reason = "Exception caught.");
+			
+		};
 		
 
 		template <typename Type>
@@ -124,5 +139,7 @@ namespace myai {
 			};
 		};
 	}
+
+	
 
 }

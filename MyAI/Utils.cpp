@@ -53,4 +53,28 @@ myai::process::smart_threadmgr::smart_threadmgr() : threadmgr(std::thread::hardw
 {
 }
 
+myai::types::exception::exception(const char* location, std::string message)
+{
+	log = "MyAI Exception thrown! Callstack:\n";
+	pack_info(location, message);
+}
 
+myai::types::exception::exception(bio::types::exception& e) {
+	log = e.log;
+	log += "... Switching from bio_API to myai_API here.";
+}
+
+myai::types::exception::~exception()
+{
+	log.~basic_string();
+}
+
+void myai::types::exception::printLog()
+{
+	std::cerr << log;
+}
+
+void myai::types::exception::pack_info(const char* location, std::string reason)
+{
+	log += "... in " + std::string(location) + ": " + reason + "\n";
+}

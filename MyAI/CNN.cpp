@@ -111,9 +111,19 @@ void myai::cnn::CNN::compute(unsigned int thread_count)
 	}
 }
 
+
 void myai::cnn::CNN::save(const char* dest)
 {
-	bio::lw::StaticBinaryBuffer buffer; buffer.open(dest, bio::lw::WRITE); //API update needed!
+
+	bio::lw::StaticBinaryBuffer buffer; 
+	try {
+		buffer.open(dest, bio::lw::WRITE);
+	}
+	catch (bio::types::exception & e) {
+		e.pack_info(__FUNCTION__, "Cannot open file " + std::string(dest));
+		throw myai::types::exception(e);
+	}
+
 	buffer << VERSION; myai_dlog("Saving: Version " << VERSION);
 
 	//DATA SECTION
@@ -139,14 +149,27 @@ void myai::cnn::CNN::save(const char* dest)
 		dlog(" finished. " << neuron_count << " neurons serialized.");
 		previous = current_layer;
 	}
-
-	buffer.finish();
+	try {
+		buffer.finish();
+	}
+	catch (bio::types::exception & e) {
+		e.pack_info(__FUNCTION__, "Cannot finish buffer.");
+		throw types::exception(e);
+	}
 }
+
 
 void myai::cnn::CNN::load(const char* src)
 {
 	clear();
-	bio::lw::StaticBinaryBuffer buffer; buffer.open(src, bio::lw::READ); buffer.read();
+	bio::lw::StaticBinaryBuffer buffer; 
+	try {
+		buffer.open(src, bio::lw::READ); buffer.read();
+	}
+	catch (bio::types::exception & e) {
+		e.pack_info(__FUNCTION__, "Cannot open and read "+ std::string(src));
+		throw types::exception(e);
+	}
 	float version; buffer >> version;
 	
 	if (version == VERSION) {
@@ -155,8 +178,9 @@ void myai::cnn::CNN::load(const char* src)
 	else {
 		myai_dlog("Loading: Version " << version << " not matching program version " << VERSION 
 			<< ". Abort." );
-		throw std::exception("loading: versions not compatible.");
+		throw types::exception(__FUNCTION__, "Fileversions do not match.");
 	}
+
 
 	//DATA SECTION
 	buffer >> data.layer_count;

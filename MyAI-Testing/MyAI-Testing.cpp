@@ -21,8 +21,9 @@ int main()
 		cnn.save("C://Users/danie/Documents/NN.cnn");
 		cnn.load("C://Users/danie/Documents/NN.cnn");
 	}
-	catch (std::exception & e) {
-		println("ERROR occured: " << e.what());
+	catch (myai::types::exception& e) {
+		e.pack_info(__FUNCTION__, "Cannot read or write.");
+		e.printLog();
 	}
 	return 0;
 }
