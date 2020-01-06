@@ -9,6 +9,8 @@
 #define BIG_ARRAY_SPLIT_SIZE 500
 #define print(x) std::cout << x;
 #define println(x) std::cout << x << std::endl;
+#define ASSERT_VECTOR_LENGTH_EQUAL(size1, size2) if (size1 != size2) throw myai::types::exception(__FUNCTION__, "Length of vectors are not equal.");
+
 
 #define myai_API __declspec(dllexport)
 
@@ -54,12 +56,18 @@ namespace myai {
 		
 		class exception {
 		public:
+			/*string containing information of stacks, this exception went through.*/
 			std::string log;
 
+			/*Constructs exception and calls pack_info(...)*/
 			myai_API exception(const char* location, std::string message = "Exception caught.");
+			/*Constructs exception from BinarIO exception by copying log string.*/
 			myai_API exception(bio::types::exception& e);
+			/*Destructs exception and deletes log string.*/
 			myai_API ~exception();
+			/*Prints log string.*/
 			myai_API void printLog();
+			/*Packs info of stack into log string.*/
 			myai_API void pack_info(const char* location, std::string reason = "Exception caught.");
 			
 		};
@@ -127,7 +135,7 @@ namespace myai {
 		private:
 			std::chrono::steady_clock::time_point last;
 		public:
-			clock() {
+			myai_API clock() {
 				last = std::chrono::steady_clock::now();
 			};
 
@@ -140,6 +148,8 @@ namespace myai {
 		};
 	}
 
-	
+	namespace func {
+		float error(std::vector<float> output, std::vector<float> expected);
+	}
 
 }

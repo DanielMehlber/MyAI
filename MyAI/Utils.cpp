@@ -78,3 +78,15 @@ void myai::types::exception::pack_info(const char* location, std::string reason)
 {
 	log += "... in " + std::string(location) + ": " + reason + "\n";
 }
+
+
+
+float myai::func::error(std::vector<float> output, std::vector<float> expected)
+{
+	size_t size = output.size();
+	ASSERT_VECTOR_LENGTH_EQUAL(size, expected.size())
+	float result = 0.0f;
+	for (size_t i = 0; i < size; i++) 
+		result += std::pow(expected[i] - output[i], 2) * 0.5f;
+	return result;
+}

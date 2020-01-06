@@ -4,7 +4,8 @@
 #define BIG_ARRAY_SPLIT_SIZE 500
 #define COMPUTATION_THREADS 100
 
-#ifdef _DEBUG
+#define MYAI_DEBUG_MESSAGES
+#if defined(_DEBUG) | defined(MYAI_DEBUG_MESSAGES)
 #define myai_dlog(x) std::cout << "[MYAI-DEBUG] " << x << std::endl;
 #define myai_ldlog(x) std::cout << "[MYAI-DEBUG] " << x;
 #define dlog(x) std::cout << x << std::endl;

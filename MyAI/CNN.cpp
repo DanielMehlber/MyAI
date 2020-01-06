@@ -82,24 +82,25 @@ myai::cnn::CNN::CNN(unsigned int* layer_data, unsigned int layer_count)
 
 myai::cnn::CNN::~CNN()
 {
-	myai_dlog("Destruction: started.");
-	for (Layer* l : layers)
-		l->~Layer();
-	myai_dlog("Destruction: completed.");
+	clear();
 }
 
+#define _MYAI_CMP_START(x) myai_ldlog("Computation started using " << x << " threads..."); auto _start_time = std::chrono::system_clock::now();
+#define _MYAI_CMP_FNISHED auto _duration = std::chrono::system_clock::now() - _start_time; dlog(" finished. Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(_duration).count() << "ms.");
 void myai::cnn::CNN::compute()
 {
-	myai_dlog("Computation: started.");
+	_MYAI_CMP_START(1);
 	unsigned int layer_count = layers.size();
 	for (unsigned int i = 0; i < layer_count; i++) {
 		layers[i]->compute();
 	}
-	myai_dlog("Destruction: completed.");
+	_MYAI_CMP_FNISHED;
 }
+
 
 void myai::cnn::CNN::compute(unsigned int thread_count)
 {
+	_MYAI_CMP_START(thread_count);
 	if (thread_count < 0)
 		return;
 	if (thread_count == 1) {
@@ -109,6 +110,7 @@ void myai::cnn::CNN::compute(unsigned int thread_count)
 	for (Layer* l : layers) {
 		l->compute(thread_count);
 	}
+	_MYAI_CMP_FNISHED;
 }
 
 
@@ -127,7 +129,7 @@ void myai::cnn::CNN::save(const char* dest)
 	buffer << VERSION; myai_dlog("Saving: Version " << VERSION);
 
 	//DATA SECTION
-	buffer << data.layer_count; myai_dlog("Saving: " << data.layer_count << " layer will be saved.");
+	buffer << data.layer_count; myai_dlog("Saving: " << data.layer_count << " layers will be saved.");
 	buffer << data.accuracy;
 
 	Layer* previous = nullptr;
@@ -156,6 +158,8 @@ void myai::cnn::CNN::save(const char* dest)
 		e.pack_info(__FUNCTION__, "Cannot finish buffer.");
 		throw types::exception(e);
 	}
+
+	myai_dlog("Saving: finished.");
 }
 
 
@@ -211,15 +215,18 @@ void myai::cnn::CNN::load(const char* src)
 	}
 
 	buffer.close();
+	myai_dlog("Loading: finished.");
 }
 
 void myai::cnn::CNN::clear()
 {
+	myai_ldlog("Cleaning up CNN...");
 	for (Layer* l : layers) {
 		l->~Layer();
 	}
 
 	layers.clear();
+	dlog(" finished.");
 }
 
 
@@ -260,4 +267,13 @@ void myai::cnn::Layer::compute(unsigned int threads) //Performance critical sect
 		t.join();
 	}
 
+}
+
+float myai::func::error(cnn::Layer& output, std::vector<float> expected)
+{
+	ASSERT_VECTOR_LENGTH_EQUAL(output.neuron_count, expected.size());
+	float result = 0.0f;
+	for (unsigned int i = 0; i < output.neuron_count; i++)
+		result += std::pow(expected[i] - output[i], 2) * 0.5f;
+	return result;
 }

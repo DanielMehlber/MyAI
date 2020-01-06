@@ -10,12 +10,14 @@
 #define myai_API __declspec(dllexport)
 
 #define AUTO_THREAD_COUNT std::thread::hardware_concurrency()
+#define SINGLE_THREAD 1
 
 using namespace myai::types;
 
 namespace myai {
 
 	namespace cnn{
+
 
 		class Layer;
 
@@ -118,8 +120,11 @@ namespace myai {
 
 		};
 
-		
-
 	};
+
+	namespace func {
+		/*Calculates the error using the output layer and a vector containing the expected values*/
+		float error(cnn::Layer& output, std::vector<float> expected);
+	}
 
 }
